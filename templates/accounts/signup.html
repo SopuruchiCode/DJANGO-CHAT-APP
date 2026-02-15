@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link href="{% static 'accounts/css/signup.css'%}" rel="stylesheet">
+</head>
+<body>
+    <div class="main-div">
+        <div class="header-div">
+            Signup
+        </div>
+        <div class="form-div">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {%for field in form%}
+                    <div class="field-div">
+                        <label>
+                            {{field.label}}
+                            {{field}}
+                        </label>
+                        {{field.errors}}
+                    </div>
+                {% endfor %}
+                {{form.non_field_errors}}
+            </div>
+            <div>
+                <button class="signup" type="submit">
+                    Signup
+                </button>
+            </form>
+        </div>
+    </div>
+    <script src="{% static 'accounts/js/signup.js'%}"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title> Signup </title>
+    <link href="{% static 'accounts/css/login.css'%}" rel="stylesheet">
+</head>
+<body>
+    <div class="main-div">
+        <div class="form-div">
+            <form method="post">
+
+                <div class="title">
+                    Login
+                </div>
+                
+                <div class="field-div">
+                    {%csrf_token%}
+                </div>
+                {% for field in form %}
+                    <div class="field-div">
+                        <label> {{field.label}}
+                            {{field}}
+                        </label>
+                    </div>
+                {%endfor%}
+                <div class="field-div">
+                    <button type="submit" class="login"> Login </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'accounts/js/login.js'%}"></script>
+</body>
+</html>

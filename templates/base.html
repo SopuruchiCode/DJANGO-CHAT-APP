@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>base</title>
+    {% load static %}
+    {% load custom_filters %}
+
+    <link rel="stylesheet" href="{% static 'base.css'%}">
+</head>
+<body>
+    <div class="base-main">
+        <div class="main-nav">
+            <div class="logo">
+                LOGO
+                <img >
+            </div>
+
+            <div class="nav-links">
+                <div class="link-div">
+                    {% if not user.is_authenticated %}
+                        <a href="/signup/"> Signup </a>
+                        <a href="/login/"> Login </a>
+                    {% else %}
+                        <a href="/profile-search/"> Search </a>
+                        <a href="/logout/"> Logout </a>
+                    {% endif %}
+
+                </div>
+                
+                <div class="user-profile-pic-div">
+                    {% if user.is_authenticated %}
+                    <img src="{{user_profile_pic_url}}">
+
+                    {% else %}
+                    <img>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="main-chat-nav">
+                <div class="title">
+                    CHATS & GROUPS
+                    <div>
+                        <button class="add-button">
+                            <a href="/profile-search/">
+                                Add Chat
+                            </a>
+                        </button>
+                        <button class="add-button">
+                            Add Group
+                        </button>
+                    </div>
+                    <div class="chat-search-div"> 
+                        <input placeholder="Search" class="chat-search">
+                    </div>
+                </div>
+                <div>
+
+                    {% for partner in gist_partners %}
+                    <div class="chat-div" id="{{partner}}">
+                        <div class="chat-profile-pic">
+                            <img src="{{user_convo|get_item:partner|get_item:'account_model'|get_attr:'profile_picture'|get_attr:'url'}}">
+                        </div>
+                        <div class="chat-nav-chat-info">
+                            <div class="chat-title">
+                                <div>{{user_convo|get_item:partner|get_item:"account_model"|get_attr:"user"|get_attr:"first_name"}} {{user_convo|get_item:partner|get_item:"account_model"|get_attr:"user"|get_attr:"last_name"}}</div>    <!-- Chat name / person name / group name -->
+
+                                <div class="chat-time-stamp">
+                                    {{user_convo|get_item:partner|get_item:"timestamp"}}                                                                <!-- 7:38pm or 1/3/20  -->
+                                </div>
+                            </div>
+
+        
+                            <div class="con-rr-ce">
+                                {%if user_convo|get_item:partner|get_item:'conversation_model'|get_method:'last_message'|get_attr:'sender'|get_attr:'user' == user%}
+                                <div class="read-receipt">
+                                    &#10003&#10003
+                                </div>
+                                {%endif%}
+            
+                                <div class="chat-excerpt">
+                                    <p> 
+
+                                        {%if user_convo|get_item:partner|get_item:'conversation_model'|get_method:'last_message' == None %}
+                                            <span></span>
+                                        {%else%}
+
+                                        {{user_convo|get_item:partner|get_item:'conversation_model'|get_method:'last_message'|get_attr:"message_text"|slice:21}}
+
+                                        {% if user_convo|get_item:partner|get_item:'conversation_model'|get_method:'last_message'|get_attr:"message_text"|length > 21 %}...{%endif%}  <!-- for adding ellipsis -->
+
+                                        {% endif %}
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div>
+                        <div>
+                            GROUPS
+                        </div>
+                        {% for group in groups %}
+                            <div class="chat-div group-div" id=group-{{group.id}}>
+                                <div class="chat-profile-pic">
+                                    <img src="{{group.profile_picture.url}}">
+                                </div>
+                                <div class="chat-nav-chat-info">
+                                    <div class="chat-title">
+                                        <div>{{group.name}}</div>    <!-- Chat name / person name / group name -->
+
+                                        <div class="chat-time-stamp">
+                                            {% if group.timestamp.date == today %}
+                                            {{group.timestamp.time}}
+                                            {%else%}
+                                            {{group.timestamp.date}}
+                                            {%endif%}
+                                        </div>
+                                    </div>
+
+                
+                                    <div class="con-rr-ce">                    
+                                        <div class="chat-excerpt">
+                                            <p> 
+                                                {%if group|get_method:'last_message' == None %}
+                                                    <span></span>
+                                                {%else%}
+
+                                                {{group|get_method:'last_message'|get_attr:"message_text"|slice:21}}
+
+                                                {% if group|get_method:'last_message'|get_attr:"message_text"|length > 21 %}...{%endif%}  <!-- for adding ellipsis -->
+
+                                                {% endif %}
+                                                
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="chat-display">
+                <div class="chat-profile-intro">
+                    <div class="chat-profile-pic">
+                        {%if user.is_authenticated%}
+                        <img src="{{user_profile_pic_url}}">
+                        {%endif%}
+                    </div>
+                    <div class="chat-name">
+                        <p class="actual-chat-name">
+                            No chat selected
+                        </p>
+                        <p class="username">
+                            
+                        </p>
+                    </div>
+                </div>
+
+                <div class="main-chat-texts">
+
+                    <!-- <div class="chat-day-con">
+                        <div class="chat-day">
+                            393 dorp 2402
+                        </div>
+                    </div>
+
+                    <div class="user-text-bubble-con">
+                        <div class="user-text-bubble bubble">
+                            <div class="txt-bbl-profile-pic">
+                                <img>
+                            </div>
+
+                            <div class="txt-bbl-username">
+                                <p> @johndoe</p>
+                            </div>
+
+                            <div class="actual-chat-text">
+                                <pre class="chat-message"> bla bla bla /n blah</pre>
+                            </div>
+
+                            <div class="chat-text-meta">
+                                <div class="main-chat-read-receipt">
+                                    ??
+                                </div>
+
+                                <div class="main-chat-time-stamp">
+                                    7:40
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <!-- <div class="partner-text-bubble-con">
+                        <div class="partner-text-bubble bubble">
+                            <div class="actual-chat-text">
+                                <pre class="chat-message"> bla bla bla n blah</pre>
+                            </div>
+                            <div class="chat-text-meta">
+                                <div class="main-chat-read-receipt">
+                                    ??
+                                </div>
+
+                                <div class="main-chat-time-stamp">
+                                    7:40
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="scroll-down-div">
+                    <img src="{% static 'down arrow/down-arrow-vector-icon-isolated-600nw-1187766172.webp'%}" style="width: 50px; height: 50px;" class="scroll-down">
+                </div>
+                <div class="chat-text-input-div">
+                    <form method="post" class="chat-text-input-div" id="message-form">
+                        {% csrf_token %}
+                        <input type="text" name="msg_text" id="msg_text_input" placeholder="Message">
+                        <button type="submit"> Send </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'base_css.js'%}"></script>
+    <script src="{% static 'base.js'%}"></script>
+</body>
+</html>
