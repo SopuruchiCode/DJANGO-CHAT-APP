@@ -141,7 +141,7 @@ function activateChat(id){
 }
 
 
-const url = "ws://" + window.location.host + `/ws/chat/`;
+const url = "wss://" + window.location.host + `/ws/chat/`;
 const websocket = new WebSocket(url);
 
 websocket.addEventListener("open", (e) => {
