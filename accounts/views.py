@@ -10,17 +10,19 @@ from django.db.models import Q
 from time import sleep
 from django.core.serializers import serialize, deserialize
 from json import loads, dumps
+from django.db import connection
 
 USER_MODEL = get_user_model()
 
 
 def get_chat_data(request, friend_username):  # make this more secure later
+    connection.queries_log.clear()
     if request.user and Account.objects.filter(user__username=friend_username).exists():     # especially here
         user_acc = Account.objects.get(user=request.user)
         friend_acc = Account.objects.get(user__username=friend_username)
 
-        conversations = Conversation.objects.all().filter(Q(participant_1=user_acc) | Q(participant_2=user_acc)).filter(Q(participant_1=friend_acc) | Q(participant_2=friend_acc))
-        if conversations.count() == 1:
+        conversations = Conversation.objects.filter(Q(participant_1=user_acc) | Q(participant_2=user_acc)).filter(Q(participant_1=friend_acc) | Q(participant_2=friend_acc))
+        if conversations:
             conversation = conversations.first()
             messages = conversation.messages.all().order_by('date_created')
 
@@ -55,6 +57,12 @@ def get_chat_data(request, friend_username):  # make this more secure later
                 else:
                     data["message_date"].get(date_created).append(msg_data)
             # print(data)
+
+            print("\n--- SQL QUERIES ---")
+            for q in connection.queries:
+                print(q["time"], q["sql"])
+
+            print("TOTAL:", len(connection.queries))
             return JsonResponse(data)
 
     return JsonResponse({})

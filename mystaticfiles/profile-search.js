@@ -14,7 +14,7 @@ async function activate() {
     const accListElem = document.querySelector(".chat-list");
 
     const websocket = new WebSocket(`wss://${window.location.host}/ws/chat-search/`);
-
+    // const websocket = new WebSocket(`ws://${window.location.host}/ws/chat-search/`);
     websocket.addEventListener("open", (event) => {
         console.log("Websocket established");
         get_username();       
