@@ -24,7 +24,7 @@ def get_chat_data(request, friend_username):  # make this more secure later
         conversations = Conversation.objects.filter(Q(participant_1=user_acc) | Q(participant_2=user_acc)).filter(Q(participant_1=friend_acc) | Q(participant_2=friend_acc))
         if conversations:
             conversation = conversations.first()
-            messages = conversation.messages.all().order_by('date_created')
+            messages = conversation.messages.select_related("sender__user", "recipient__user").order_by('date_created')
 
             data = {"message_date": {},
                     "profile_pic_url": f"{friend_acc.profile_picture.url}",
