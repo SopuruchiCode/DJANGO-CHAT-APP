@@ -24,7 +24,7 @@ async function activate() {
         data = JSON.parse(event.data);
 
         if(data.type === "conversation_starter" && data.outcome === "conversation_created"){
-            url = new URL(`http://${window.location.host}/`);
+            url = new URL(`https://${window.location.host}/`);
             url.searchParams.set("convo_partner", data["convo_partner"]);
             window.location.href = url.toString();
         }
